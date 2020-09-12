@@ -29,7 +29,7 @@ pub fn new(filename: &str) -> Parser {
         if let Ok(mut line) = line {
             println!("{}", line);
 
-            if line.starts_with("//") {
+            if is_comment(line.as_str()) {
                 continue;
             }
 
@@ -48,6 +48,10 @@ pub fn new(filename: &str) -> Parser {
         lines,
         current_command_index: None,
     }
+}
+
+fn is_comment(line: &str) -> bool {
+    line.starts_with("//")
 }
 
 impl Parser {
