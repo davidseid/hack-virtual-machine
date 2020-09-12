@@ -4,14 +4,20 @@ use std::fs;
 fn main() {
     println!("VM Translator starting up...");
 
+    let vm_files = get_vm_files();
+
+    for vm_file in vm_files {
+        println!("{}", vm_file);
+    }
+
+    
+}
+
+fn get_vm_files() -> Vec<String> {
     let args: Vec<String> = env::args().collect();
     let source = &args[1];
 
     println!("Source intermediary VM code: {}", source);
-
-    // initialize array of filenames
-    // if source is .vm, add it to the filenames
-    // if not, get all the files in it and add it to the array
 
     let mut source_files = Vec::<String>::new();
 
@@ -30,4 +36,6 @@ fn main() {
             }     
         }
     }
+
+    source_files
 }
