@@ -93,7 +93,11 @@ impl Parser {
         // Returns the first argument of the current command
         // If C_ARITHMETIC return command itself
         // Don't call this if C_RETURN
-        String::from("placeholder")
+        let command = self.get_current_command().unwrap();
+        match self.command_type() {
+            Command::C_ARITHMETIC => String::from(command),
+            _ => String::from(command.split(" ").collect::<Vec<&str>>().first().unwrap().to_string()),
+        }
     }
 
     pub fn arg_2(&self) -> usize {
