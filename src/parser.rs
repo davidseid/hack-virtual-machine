@@ -47,13 +47,15 @@ pub fn new(filename: &str) -> Parser {
     Parser{
         lines,
         current_command_index: None,
-        current_command: None,
     }
 }
 
 impl Parser {
-    pub fn get_current_command(&self) -> Option<String> {
-        self.lines[self.current_command_index]
+    pub fn get_current_command(&self) -> Option<&str> {
+        match self.current_command_index {
+            Some(x) => Some(self.lines[x].as_str()),
+            None => None,
+        }
     }
 
     pub fn has_more_commands(&self) -> bool {
@@ -75,17 +77,7 @@ impl Parser {
     }
 
     pub fn command_type(&self) -> Command {
-
-        let command = self.current_command.as_ref().unwrap();
-        if command.starts_with("@") {
-            return Command::ACommand;
-        }
-
-        if command.contains("=") || command.contains(";") {
-            return Command::CCommand;
-        }
-
-        Command::LCommand
+        Command::C_ARITHMETIC
     }
 
     pub fn arg_1(&self) {
@@ -93,7 +85,7 @@ impl Parser {
     }
 
     pub fn arg_2(&self) {
-        
+
     }
 }    
 

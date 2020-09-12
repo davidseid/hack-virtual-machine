@@ -1,5 +1,8 @@
+mod parser;
+
 use std::env;
 use std::fs;
+
 
 fn main() {
     println!("VM Translator starting up...");
@@ -8,7 +11,8 @@ fn main() {
     let vm_files = get_vm_files(source);
 
     for vm_file in vm_files {
-        println!("{}", vm_file);
+        println!("Parsing {}", vm_file);
+        let parser = parser::new(vm_file.as_str());
     }
 
 }
