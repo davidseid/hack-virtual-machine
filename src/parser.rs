@@ -37,8 +37,7 @@ pub fn new(filename: &str) -> Parser {
                 continue;
             }
 
-            line = line.split("//").collect::<Vec<&str>>().first().unwrap().to_string();
-            line = line.split_whitespace().collect::<String>();
+            line = remove_comments_and_whitespace(&line);
 
             lines.push(line);
         }
@@ -52,6 +51,12 @@ pub fn new(filename: &str) -> Parser {
 
 fn is_comment(line: &str) -> bool {
     line.starts_with("//")
+}
+
+fn remove_comments_and_whitespace(line: &str) -> String {
+    let mut cleaned_line = line.split("//").collect::<Vec<&str>>().first().unwrap().to_string();
+    cleaned_line = cleaned_line.split_whitespace().collect::<String>();
+    cleaned_line
 }
 
 impl Parser {
