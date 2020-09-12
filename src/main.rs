@@ -39,7 +39,7 @@ fn get_vm_files(source: String) -> Vec<String> {
             
             if path.extension().unwrap() == "vm" {
                 let file_name = path.file_name().unwrap().to_str().unwrap();
-                source_files.push(String::from(file_name));
+                source_files.push(String::from(format!("{}/{}", source, file_name)));
             }     
         }
     }
