@@ -4,21 +4,24 @@ use std::fs;
 fn main() {
     println!("VM Translator starting up...");
 
-    let vm_files = get_vm_files();
+    let source = get_source_from_command_line_arg();
+    let vm_files = get_vm_files(source);
 
     for vm_file in vm_files {
         println!("{}", vm_file);
     }
 
-    
 }
 
-fn get_vm_files() -> Vec<String> {
+fn get_source_from_command_line_arg() -> String {
     let args: Vec<String> = env::args().collect();
     let source = &args[1];
 
     println!("Source intermediary VM code: {}", source);
+    String::from(source)
+}
 
+fn get_vm_files(source: String) -> Vec<String> {
     let mut source_files = Vec::<String>::new();
 
     if source.contains(".vm") {
@@ -39,3 +42,5 @@ fn get_vm_files() -> Vec<String> {
 
     source_files
 }
+
+
