@@ -13,15 +13,21 @@ fn main() {
     // if source is .vm, add it to the filenames
     // if not, get all the files in it and add it to the array
 
-    let mut source_files = Vec::<&str>::new();
+    let mut source_files = Vec::<String>::new();
 
     if source.contains(".vm") {
-        source_files.push(source);
+        source_files.push(String::from(source));
     } else {
-        let paths = fs::read_dir(&source).unwrap();
+        let dir_entries = fs::read_dir(&source).unwrap();
 
-        for path in paths {
-            println!("Name: {}", path.unwrap().path().display())
+        for dir_entry in dir_entries {
+
+            let path = dir_entry.unwrap().path();
+            
+            if path.extension().unwrap() == "vm" {
+                let file_name = path.file_name().unwrap().to_str().unwrap();
+                source_files.push(String::from(file_name));
+            }     
         }
     }
 }
