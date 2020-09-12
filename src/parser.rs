@@ -89,12 +89,17 @@ impl Parser {
         Command::C_ARITHMETIC
     }
 
-    pub fn arg_1(&self) {
-
+    pub fn arg_1(&self) -> String {
+        // Returns the first argument of the current command
+        // If C_ARITHMETIC return command itself
+        // Don't call this if C_RETURN
+        String::from("placeholder")
     }
 
-    pub fn arg_2(&self) {
-
+    pub fn arg_2(&self) -> usize {
+        // Returns the second argument of the current command.
+        // Only called if C_PUSH, C_POP, C_FUNCTION, C_CALL
+        0
     }
 }    
 
