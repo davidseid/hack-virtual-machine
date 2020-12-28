@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 #[derive(Debug)]
+#[allow(non_camel_case_types)]
 pub enum Command {
     C_ARITHMETIC,
     C_PUSH,
