@@ -1,4 +1,5 @@
 mod parser;
+mod code_writer;
 
 use std::env;
 use std::fs;
@@ -8,6 +9,8 @@ fn main() {
 
     let source = get_source_from_command_line_arg();
     let vm_files = get_vm_files(source);
+
+    let code_writer = code_writer::new("hardcodedtest.hack");
 
     for vm_file in vm_files {
         println!("Parsing {}", vm_file);
@@ -31,6 +34,8 @@ fn main() {
                 parser::Command::C_CALL => println!("ARG 2: {:?}", parser.arg_2()),
                 _ => (),
             }
+
+
             parser.advance();
         }
     }
