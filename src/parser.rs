@@ -109,22 +109,19 @@ impl Parser {
         // If C_ARITHMETIC return command itself
         // Don't call this if C_RETURN
         let command = self.get_current_command().unwrap();
+
         match self.command_type() {
-            Command::C_ARITHMETIC => String::from(command),
-            _ => String::from(
-                command
-                    .split(" ")
-                    .collect::<Vec<&str>>()
-                    .first()
-                    .unwrap()
-                    .to_string(),
-            ),
+            Command::C_ARITHMETIC => command.to_string(),
+            _ => command.split(" ").collect::<Vec<&str>>()[1].to_string(),
         }
     }
 
     pub fn arg_2(&self) -> usize {
         // Returns the second argument of the current command.
         // Only called if C_PUSH, C_POP, C_FUNCTION, C_CALL
-        0
+        let command = self.get_current_command().unwrap();
+        command.split_whitespace().collect::<Vec<&str>>()[2]
+            .parse::<usize>()
+            .unwrap()
     }
 }

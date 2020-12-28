@@ -16,8 +16,21 @@ fn main() {
         println!("\nParsing debugging...\n");
         parser.advance(); // Move to first command
         while parser.has_more_commands() {
-            println!("{:?}", parser.get_current_command());
+            println!("\nRaw line: {:?}", parser.get_current_command().unwrap());
             println!("Command: {:?}", parser.command_type());
+
+            match parser.command_type() {
+                parser::Command::C_RETURN => (),
+                _ => println!("ARG 1: {:?}", parser.arg_1()),
+            }
+
+            match parser.command_type() {
+                parser::Command::C_PUSH => println!("ARG 2: {:?}", parser.arg_2()),
+                parser::Command::C_POP => println!("ARG 2: {:?}", parser.arg_2()),
+                parser::Command::C_FUNCTION => println!("ARG 2: {:?}", parser.arg_2()),
+                parser::Command::C_CALL => println!("ARG 2: {:?}", parser.arg_2()),
+                _ => (),
+            }
             parser.advance();
         }
     }
