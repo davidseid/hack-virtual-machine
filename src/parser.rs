@@ -10,8 +10,8 @@ pub enum Command {
     C_GOTO,
     C_IF,
     C_FUNCTION,
-    C_RETURN,
     C_CALL,
+    C_RETURN,
 }
 
 pub struct Parser {
@@ -54,14 +54,11 @@ fn is_comment(line: &str) -> bool {
 }
 
 fn remove_comments_and_whitespace(line: &str) -> String {
-    let mut cleaned_line = line
-        .split("//")
+    line.split("//")
         .collect::<Vec<&str>>()
         .first()
         .unwrap()
-        .to_string();
-    cleaned_line = cleaned_line.split_whitespace().collect::<String>();
-    cleaned_line
+        .to_string()
 }
 
 impl Parser {
@@ -91,7 +88,20 @@ impl Parser {
     }
 
     pub fn command_type(&self) -> Command {
-        Command::C_ARITHMETIC
+        let command = self.get_current_command().unwrap();
+        let first_word = command.split_whitespace().collect::<Vec<&str>>()[0];
+
+        match first_word {
+            "push" => Command::C_PUSH,
+            "pop" => Command::C_POP,
+            "label" => Command::C_LABEL,
+            "goto" => Command::C_GOTO,
+            "if-goto" => Command::C_IF,
+            "function" => Command::C_FUNCTION,
+            "call" => Command::C_CALL,
+            "return" => Command::C_RETURN,
+            _ => Command::C_ARITHMETIC,
+        }
     }
 
     pub fn arg_1(&self) -> String {

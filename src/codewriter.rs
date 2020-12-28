@@ -11,7 +11,6 @@ pub fn set_filename(filename: &str) {}
 // Writes the assembly code that is the translation of the given arithmetic command
 pub fn write_arithmetic(command: &str) {}
 
-
 // Writes the assembly code that is the translation of the given command (push or pop)
 pub fn write_push_pop(command: Command, segment: &str, index: usize) {}
 

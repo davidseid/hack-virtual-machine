@@ -11,7 +11,15 @@ fn main() {
 
     for vm_file in vm_files {
         println!("Parsing {}", vm_file);
-        let parser = parser::new(vm_file.as_str());
+        let mut parser = parser::new(vm_file.as_str());
+
+        println!("\nParsing debugging...\n");
+        parser.advance(); // Move to first command
+        while parser.has_more_commands() {
+            println!("{:?}", parser.get_current_command());
+            println!("Command: {:?}", parser.command_type());
+            parser.advance();
+        }
     }
 }
 
