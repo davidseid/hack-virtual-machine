@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{BufReader, BufRead};
+use std::io::{BufRead, BufReader};
 
 #[derive(Debug)]
 pub enum Command {
@@ -43,7 +43,7 @@ pub fn new(filename: &str) -> Parser {
         }
     }
 
-    Parser{
+    Parser {
         lines,
         current_command_index: None,
     }
@@ -54,7 +54,12 @@ fn is_comment(line: &str) -> bool {
 }
 
 fn remove_comments_and_whitespace(line: &str) -> String {
-    let mut cleaned_line = line.split("//").collect::<Vec<&str>>().first().unwrap().to_string();
+    let mut cleaned_line = line
+        .split("//")
+        .collect::<Vec<&str>>()
+        .first()
+        .unwrap()
+        .to_string();
     cleaned_line = cleaned_line.split_whitespace().collect::<String>();
     cleaned_line
 }
@@ -77,8 +82,8 @@ impl Parser {
     pub fn advance(&mut self) {
         match self.current_command_index {
             Some(index) => {
-                self.current_command_index = Some(index+1);
-            },
+                self.current_command_index = Some(index + 1);
+            }
             None => {
                 self.current_command_index = Some(0);
             }
@@ -96,7 +101,14 @@ impl Parser {
         let command = self.get_current_command().unwrap();
         match self.command_type() {
             Command::C_ARITHMETIC => String::from(command),
-            _ => String::from(command.split(" ").collect::<Vec<&str>>().first().unwrap().to_string()),
+            _ => String::from(
+                command
+                    .split(" ")
+                    .collect::<Vec<&str>>()
+                    .first()
+                    .unwrap()
+                    .to_string(),
+            ),
         }
     }
 
@@ -105,6 +117,4 @@ impl Parser {
         // Only called if C_PUSH, C_POP, C_FUNCTION, C_CALL
         0
     }
-}    
-
-
+}
