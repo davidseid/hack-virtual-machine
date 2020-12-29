@@ -8,9 +8,10 @@ fn main() {
     println!("VM Translator starting up...");
 
     let source = get_source_from_command_line_arg();
-    let vm_files = get_vm_files(source);
+    let vm_files = get_vm_files(&source);
 
-    let mut code_writer = code_writer::new("hardcodedtest.hack");
+    let hack_filename = get_hack_filename(&source);
+    let mut code_writer = code_writer::new(hack_filename.as_str());
 
     for vm_file in vm_files {
         println!("Parsing {}", vm_file);
@@ -51,7 +52,7 @@ fn get_source_from_command_line_arg() -> String {
     String::from(source)
 }
 
-fn get_vm_files(source: String) -> Vec<String> {
+fn get_vm_files(source: &str) -> Vec<String> {
     let mut source_files = Vec::<String>::new();
 
     if source.contains(".vm") {
@@ -70,4 +71,13 @@ fn get_vm_files(source: String) -> Vec<String> {
     }
 
     source_files
+}
+
+fn get_hack_filename(mut source: &str) -> String {
+    if source.contains(".vm") {
+        source = source.strip_suffix(".vm").unwrap();
+    }
+    
+    println!("{}", source);
+    String::from(format!("{}.hack", source))
 }
