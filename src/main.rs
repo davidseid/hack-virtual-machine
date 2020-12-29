@@ -78,6 +78,5 @@ fn get_hack_filename(mut source: &str) -> String {
         source = source.strip_suffix(".vm").unwrap();
     }
     
-    println!("{}", source);
-    String::from(format!("{}.hack", source))
+    String::from(format!("{}.asm", source))
 }
