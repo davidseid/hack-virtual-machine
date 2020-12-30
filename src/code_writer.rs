@@ -1,6 +1,7 @@
 use crate::parser;
 
 use std::fs::File;
+use std::io::Write;
 
 // CodeWriter translates VM commands into HACK Assembly Code
 
@@ -22,7 +23,7 @@ pub struct CodeWriter {
 
 // Opens the output file/stream and gets ready to write into it
 pub fn new(filename: &str) -> CodeWriter {
-    let mut hack_file = File::create(filename).unwrap();
+    let hack_file = File::create(filename).unwrap();
     CodeWriter { 
         hack_file,
         curr_vm_filename: None,
@@ -42,7 +43,25 @@ impl CodeWriter {
     }
 
     // Writes the assembly code that is the translation of the given command (push or pop)
-    pub fn write_push_pop(&self, command: parser::Command, segment: &str, index: usize) {}
+    pub fn write_push_pop(&mut self, command: parser::Command, segment: &str, index: usize) {
+        match command {
+            parser::Command::C_PUSH => {
+                match segment {
+                    "constant" => {
+                        writeln!(self.hack_file, "@{}", index).unwrap();
+                        writeln!(self.hack_file, "D=A").unwrap(); 
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "A=M").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "M=M+1").unwrap();
+                    },
+                    _ => (),
+                }
+            },
+            _ => (),
+        }
+    }
 
     // Closes the output file
     pub fn close(&self) {}

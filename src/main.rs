@@ -39,6 +39,12 @@ fn main() {
                 _ => (),
             }
 
+            // Writing
+            match parser.command_type() {
+                parser::Command::C_PUSH | parser::Command::C_POP => code_writer.write_push_pop(parser::Command::C_PUSH, &parser.arg_1(), parser.arg_2()),
+                _ => (),
+            }
+
             parser.advance();
         }
     }
