@@ -165,7 +165,39 @@ impl CodeWriter {
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
             },
-            "lt" => (),
+            "lt" => {
+                // Pop off top and store in D
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M").unwrap();
+                // Pop off top again and store in A
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                // Compare 
+                // Subtract
+                writeln!(self.hack_file, "D=M-D").unwrap();
+                // Jump to True if Positive
+                writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "D;JLT").unwrap();
+                // Else store False in D and Jump to Continue 
+                writeln!(self.hack_file, "D=0").unwrap();
+                writeln!(self.hack_file, "@CONTINUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "0;JMP").unwrap();
+                writeln!(self.hack_file, "(TRUE{})", self.labelIncrementer).unwrap();
+                // Store True in D
+                writeln!(self.hack_file, "D=-1").unwrap();
+                writeln!(self.hack_file, "(CONTINUE{})", self.labelIncrementer).unwrap();
+                // Push the value of D back onto the stack
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "M=D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M+1").unwrap();
+            },
             "and" => (),
             "or" => (),
             "not" => (),
