@@ -57,6 +57,14 @@ impl CodeWriter {
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
             },
+            "sub" => (),
+            "neg" => (),
+            "and" => (),
+            "or" => (),
+            "not" => (),
+            "eq" => (),
+            "gt" => (),
+            "lt" => (),
             _ => (),
         }
     }
