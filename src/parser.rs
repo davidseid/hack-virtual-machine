@@ -72,7 +72,7 @@ impl Parser {
 
     pub fn has_more_commands(&self) -> bool {
         match self.current_command_index {
-            Some(index) => index < self.lines.len() - 1,
+            Some(index) => index <= self.lines.len() - 1,
             None => true,
         }
     }

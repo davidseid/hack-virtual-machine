@@ -38,8 +38,27 @@ impl CodeWriter {
     }
 
     // Writes the assembly code that is the translation of the given arithmetic command
-    pub fn write_arithmetic(&self, command: &str) {
-
+    pub fn write_arithmetic(&mut self, command: &str) {
+        match command {
+            "add" => {
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=D+M").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "M=D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M+1").unwrap();
+            },
+            _ => (),
+        }
     }
 
     // Writes the assembly code that is the translation of the given command (push or pop)
