@@ -39,16 +39,20 @@ impl CodeWriter {
     pub fn write_arithmetic(&mut self, command: &str) {
         match command {
             "add" => {
+                // Pop off top
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M-1").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "D=M").unwrap();
+                // Pop off top again and store in A
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M-1").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
+                // Add D and A
                 writeln!(self.hack_file, "D=D+M").unwrap();
+                // Push result back on Top
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "M=D").unwrap();
@@ -56,16 +60,20 @@ impl CodeWriter {
                 writeln!(self.hack_file, "M=M+1").unwrap();
             },
             "sub" => {
+                // Pop off top and store in D
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M-1").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "D=M").unwrap();
+                // Pop off top again and store in A
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M-1").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
+                // Subtract D from A
                 writeln!(self.hack_file, "D=M-D").unwrap();
+                // Push result back on top
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "M=D").unwrap();
@@ -88,7 +96,39 @@ impl CodeWriter {
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
             },
-            "eq" => (),
+            "eq" => {
+                // Pop off top and store in D
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M").unwrap();
+                // Pop off top again and store in A
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                // Compare 
+                // Subtract
+                writeln!(self.hack_file, "D=M-D").unwrap();
+                // Jump to True if Equal
+                writeln!(self.hack_file, "@TRUE0").unwrap();
+                writeln!(self.hack_file, "D;JEQ").unwrap();
+                // Else store False in D and Jump to Continue 
+                writeln!(self.hack_file, "D=0").unwrap();
+                writeln!(self.hack_file, "@CONTINUE0").unwrap();
+                writeln!(self.hack_file, "0;JMP").unwrap();
+                writeln!(self.hack_file, "(TRUE0)").unwrap();
+                // Store True in D
+                writeln!(self.hack_file, "D=-1").unwrap();
+                writeln!(self.hack_file, "(CONTINUE0)").unwrap();
+                // Push the value of D back onto the stack
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "M=D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M+1").unwrap();
+            },
             "gt" => (),
             "lt" => (),
             "and" => (),
