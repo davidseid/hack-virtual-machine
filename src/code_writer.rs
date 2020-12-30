@@ -180,7 +180,7 @@ impl CodeWriter {
                 // Compare 
                 // Subtract
                 writeln!(self.hack_file, "D=M-D").unwrap();
-                // Jump to True if Positive
+                // Jump to True if Negative
                 writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
                 writeln!(self.hack_file, "D;JLT").unwrap();
                 // Else store False in D and Jump to Continue 
@@ -198,7 +198,27 @@ impl CodeWriter {
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
             },
-            "and" => (),
+            "and" => {
+                // Pop off top
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M").unwrap();
+                // Pop off top again and store in A
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                // Bitwise AND
+                writeln!(self.hack_file, "D=D&M").unwrap();
+                // Push result back on Top
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "M=D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M+1").unwrap();
+            },
             "or" => (),
             "not" => (),
             _ => (),
