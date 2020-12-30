@@ -41,225 +41,95 @@ impl CodeWriter {
     pub fn write_arithmetic(&mut self, command: &str) {
         match command {
             "add" => {
-                // Pop off top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Add D and A
+                self.write_pop_y();
+                self.write_pop_x();
                 writeln!(self.hack_file, "D=D+M").unwrap();
-                // Push result back on Top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
+                self.write_push_result();
             },
             "sub" => {
-                // Pop off top and store in D
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Subtract D from A
+                self.write_pop_y();
+                self.write_pop_x();
                 writeln!(self.hack_file, "D=M-D").unwrap();
-                // Push result back on top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
+                self.write_push_result();
             },
             "neg" =>  {
-                // Pop off top and store
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Negate
+                self.write_pop_y();
                 writeln!(self.hack_file, "D=-D").unwrap();
-                // Push back on 
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
+                self.write_push_result();
             },
             "eq" => {
-                // Pop off top and store in D
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Compare 
-                // Subtract
-                writeln!(self.hack_file, "D=M-D").unwrap();
-                // Jump to True if Equal
-                writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
-                writeln!(self.hack_file, "D;JEQ").unwrap();
-                // Else store False in D and Jump to Continue 
-                writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
-                writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
-                // Store True in D
-                writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
-                // Push the value of D back onto the stack
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
-                self.label_incrementer += 1;
+                self.write_pop_y();
+                self.write_pop_x();
+                self.write_compare("JEQ");
+                self.write_push_result();
             },
             "gt" => {
-                // Pop off top and store in D
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Compare 
-                // Subtract
-                writeln!(self.hack_file, "D=M-D").unwrap();
-                // Jump to True if Positive
-                writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
-                writeln!(self.hack_file, "D;JGT").unwrap();
-                // Else store False in D and Jump to Continue 
-                writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
-                writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
-                // Store True in D
-                writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
-                // Push the value of D back onto the stack
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
-                self.label_incrementer += 1;
+                self.write_pop_y();
+                self.write_pop_x();
+                self.write_compare("JGT");
+                self.write_push_result();
             },
             "lt" => {
-                // Pop off top and store in D
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Compare 
-                // Subtract
-                writeln!(self.hack_file, "D=M-D").unwrap();
-                // Jump to True if Negative
-                writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
-                writeln!(self.hack_file, "D;JLT").unwrap();
-                // Else store False in D and Jump to Continue 
-                writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
-                writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
-                // Store True in D
-                writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
-                // Push the value of D back onto the stack
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
-                self.label_incrementer += 1;
+                self.write_pop_y();
+                self.write_pop_x();
+                self.write_compare("JLT");
+                self.write_push_result();
             },
             "and" => {
-                // Pop off top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Bitwise AND
+                self.write_pop_y();
+                self.write_pop_x();
                 writeln!(self.hack_file, "D=D&M").unwrap();
-                // Push result back on Top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
+                self.write_push_result();
             },
             "or" => {
-                // Pop off top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Pop off top again and store in A
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                // Bitwise OR
+                self.write_pop_y();
+                self.write_pop_x();
                 writeln!(self.hack_file, "D=D|M").unwrap();
-                // Push result back on Top
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
+                self.write_push_result();
             },
             "not" => {
-                // Pop off top and store
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M-1").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "D=M").unwrap();
-                // Bitwise NOT
+                self.write_pop_y();
                 writeln!(self.hack_file, "D=!D").unwrap();
-                // Push back on 
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "A=M").unwrap();
-                writeln!(self.hack_file, "M=D").unwrap();
-                writeln!(self.hack_file, "@SP").unwrap();
-                writeln!(self.hack_file, "M=M+1").unwrap();
+                self.write_push_result();
             },
             _ => (),
         }
+    }
+
+    fn write_pop_y(&mut self) {
+        writeln!(self.hack_file, "@SP").unwrap();
+        writeln!(self.hack_file, "M=M-1").unwrap();
+        writeln!(self.hack_file, "@SP").unwrap();
+        writeln!(self.hack_file, "A=M").unwrap();
+        writeln!(self.hack_file, "D=M").unwrap();
+    }
+
+    fn write_pop_x(&mut self) {
+        writeln!(self.hack_file, "@SP").unwrap();
+        writeln!(self.hack_file, "M=M-1").unwrap();
+        writeln!(self.hack_file, "@SP").unwrap();
+        writeln!(self.hack_file, "A=M").unwrap();
+    }
+
+    fn write_push_result(&mut self) {
+        writeln!(self.hack_file, "@SP").unwrap();
+        writeln!(self.hack_file, "A=M").unwrap();
+        writeln!(self.hack_file, "M=D").unwrap();
+        writeln!(self.hack_file, "@SP").unwrap();
+        writeln!(self.hack_file, "M=M+1").unwrap();
+    }
+
+    fn write_compare(&mut self, mnemonic: &str) {
+        writeln!(self.hack_file, "D=M-D").unwrap();
+        writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
+        writeln!(self.hack_file, "D;{}", mnemonic).unwrap();
+        writeln!(self.hack_file, "D=0").unwrap();
+        writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
+        writeln!(self.hack_file, "0;JMP").unwrap();
+        writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
+        writeln!(self.hack_file, "D=-1").unwrap();
+        writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
+        self.label_incrementer += 1;
     }
 
     // Writes the assembly code that is the translation of the given command (push or pop)
