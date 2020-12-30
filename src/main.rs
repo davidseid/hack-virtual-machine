@@ -41,7 +41,7 @@ fn main() {
 
             // Writing
             match parser.command_type() {
-                parser::Command::C_PUSH | parser::Command::C_POP => code_writer.write_push_pop(parser::Command::C_PUSH, &parser.arg_1(), parser.arg_2()),
+                parser::Command::C_PUSH | parser::Command::C_POP => code_writer.write_push_pop(parser.command_type(), &parser.arg_1(), parser.arg_2()),
                 parser::Command::C_ARITHMETIC => code_writer.write_arithmetic(&parser.arg_1()),
                 _ => (),
 

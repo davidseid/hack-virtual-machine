@@ -17,7 +17,7 @@ pub struct CodeWriter {
     hack_file: File,
     curr_vm_filename: std::option::Option<String>,
     // sp: i32,
-    labelIncrementer: i32,
+    label_incrementer: i32,
 }
 
 // Opens the output file/stream and gets ready to write into it
@@ -27,7 +27,7 @@ pub fn new(filename: &str) -> CodeWriter {
         hack_file,
         curr_vm_filename: None,
         // sp: 256,
-        labelIncrementer: 0,
+        label_incrementer: 0,
     }
 }
 
@@ -90,7 +90,7 @@ impl CodeWriter {
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "D=M").unwrap();
                 // Negate
-                writeln!(self.hack_file, "D=-D")
+                writeln!(self.hack_file, "D=-D").unwrap();
                 // Push back on 
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
@@ -114,23 +114,23 @@ impl CodeWriter {
                 // Subtract
                 writeln!(self.hack_file, "D=M-D").unwrap();
                 // Jump to True if Equal
-                writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
                 writeln!(self.hack_file, "D;JEQ").unwrap();
                 // Else store False in D and Jump to Continue 
                 writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
                 writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE{})", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
                 // Store True in D
                 writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE{})", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
                 // Push the value of D back onto the stack
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "M=D").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
-                self.labelIncrementer++;
+                self.label_incrementer += 1;
             },
             "gt" => {
                 // Pop off top and store in D
@@ -148,22 +148,23 @@ impl CodeWriter {
                 // Subtract
                 writeln!(self.hack_file, "D=M-D").unwrap();
                 // Jump to True if Positive
-                writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
                 writeln!(self.hack_file, "D;JGT").unwrap();
                 // Else store False in D and Jump to Continue 
                 writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
                 writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE{})", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
                 // Store True in D
                 writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE{})", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
                 // Push the value of D back onto the stack
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "M=D").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
+                self.label_incrementer += 1;
             },
             "lt" => {
                 // Pop off top and store in D
@@ -181,22 +182,23 @@ impl CodeWriter {
                 // Subtract
                 writeln!(self.hack_file, "D=M-D").unwrap();
                 // Jump to True if Negative
-                writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "@TRUE{}", self.label_incrementer).unwrap();
                 writeln!(self.hack_file, "D;JLT").unwrap();
                 // Else store False in D and Jump to Continue 
                 writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE{}", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "@CONTINUE{}", self.label_incrementer).unwrap();
                 writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE{})", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "(TRUE{})", self.label_incrementer).unwrap();
                 // Store True in D
                 writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE{})", self.labelIncrementer).unwrap();
+                writeln!(self.hack_file, "(CONTINUE{})", self.label_incrementer).unwrap();
                 // Push the value of D back onto the stack
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "M=D").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
+                self.label_incrementer += 1;
             },
             "and" => {
                 // Pop off top
@@ -248,7 +250,7 @@ impl CodeWriter {
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "D=M").unwrap();
                 // Bitwise NOT
-                writeln!(self.hack_file, "D=!D")
+                writeln!(self.hack_file, "D=!D").unwrap();
                 // Push back on 
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
@@ -280,9 +282,6 @@ impl CodeWriter {
             _ => (),
         }
     }
-
-    // Closes the output file
-    pub fn close(&self) {}
 }
 
 
