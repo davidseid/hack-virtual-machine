@@ -13,12 +13,10 @@ use std::io::Write;
 // 16384 - 24575 ~ Memory mapped I/O
 // 24576 - 32767 ~ Unused mem space
 
-
-
 pub struct CodeWriter {
     hack_file: File,
     curr_vm_filename: std::option::Option<String>,
-    sp: i32,
+    // sp: i32,
 }
 
 // Opens the output file/stream and gets ready to write into it
@@ -27,7 +25,7 @@ pub fn new(filename: &str) -> CodeWriter {
     CodeWriter { 
         hack_file,
         curr_vm_filename: None,
-        sp: 256,
+        // sp: 256,
     }
 }
 
@@ -57,14 +55,45 @@ impl CodeWriter {
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
             },
-            "sub" => (),
-            "neg" => (),
-            "and" => (),
-            "or" => (),
-            "not" => (),
+            "sub" => {
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M-D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "M=D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M+1").unwrap();
+            },
+            "neg" =>  {
+                // Pop off top and store
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M-1").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "D=M").unwrap();
+                // Negate
+                writeln!(self.hack_file, "D=-D")
+                // Push back on 
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "A=M").unwrap();
+                writeln!(self.hack_file, "M=D").unwrap();
+                writeln!(self.hack_file, "@SP").unwrap();
+                writeln!(self.hack_file, "M=M+1").unwrap();
+            },
             "eq" => (),
             "gt" => (),
             "lt" => (),
+            "and" => (),
+            "or" => (),
+            "not" => (),
             _ => (),
         }
     }
