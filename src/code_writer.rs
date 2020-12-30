@@ -17,6 +17,7 @@ pub struct CodeWriter {
     hack_file: File,
     curr_vm_filename: std::option::Option<String>,
     // sp: i32,
+    labelIncrementer: i32,
 }
 
 // Opens the output file/stream and gets ready to write into it
@@ -26,6 +27,7 @@ pub fn new(filename: &str) -> CodeWriter {
         hack_file,
         curr_vm_filename: None,
         // sp: 256,
+        labelIncrementer: 0,
     }
 }
 
@@ -112,22 +114,23 @@ impl CodeWriter {
                 // Subtract
                 writeln!(self.hack_file, "D=M-D").unwrap();
                 // Jump to True if Equal
-                writeln!(self.hack_file, "@TRUE0").unwrap();
+                writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
                 writeln!(self.hack_file, "D;JEQ").unwrap();
                 // Else store False in D and Jump to Continue 
                 writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE0").unwrap();
+                writeln!(self.hack_file, "@CONTINUE{}", self.labelIncrementer).unwrap();
                 writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE0)").unwrap();
+                writeln!(self.hack_file, "(TRUE{})", self.labelIncrementer).unwrap();
                 // Store True in D
                 writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE0)").unwrap();
+                writeln!(self.hack_file, "(CONTINUE{})", self.labelIncrementer).unwrap();
                 // Push the value of D back onto the stack
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
                 writeln!(self.hack_file, "M=D").unwrap();
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "M=M+1").unwrap();
+                self.labelIncrementer++;
             },
             "gt" => {
                 // Pop off top and store in D
@@ -145,16 +148,16 @@ impl CodeWriter {
                 // Subtract
                 writeln!(self.hack_file, "D=M-D").unwrap();
                 // Jump to True if Positive
-                writeln!(self.hack_file, "@TRUE1").unwrap();
+                writeln!(self.hack_file, "@TRUE{}", self.labelIncrementer).unwrap();
                 writeln!(self.hack_file, "D;JGT").unwrap();
                 // Else store False in D and Jump to Continue 
                 writeln!(self.hack_file, "D=0").unwrap();
-                writeln!(self.hack_file, "@CONTINUE1").unwrap();
+                writeln!(self.hack_file, "@CONTINUE{}", self.labelIncrementer).unwrap();
                 writeln!(self.hack_file, "0;JMP").unwrap();
-                writeln!(self.hack_file, "(TRUE1)").unwrap();
+                writeln!(self.hack_file, "(TRUE{})", self.labelIncrementer).unwrap();
                 // Store True in D
                 writeln!(self.hack_file, "D=-1").unwrap();
-                writeln!(self.hack_file, "(CONTINUE1)").unwrap();
+                writeln!(self.hack_file, "(CONTINUE{})", self.labelIncrementer).unwrap();
                 // Push the value of D back onto the stack
                 writeln!(self.hack_file, "@SP").unwrap();
                 writeln!(self.hack_file, "A=M").unwrap();
