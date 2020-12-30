@@ -106,9 +106,7 @@ impl CodeWriter {
 
     fn write_pop_x(&mut self) {
         writeln!(self.hack_file, "@SP").unwrap();
-        writeln!(self.hack_file, "M=M-1").unwrap();
-        writeln!(self.hack_file, "@SP").unwrap();
-        writeln!(self.hack_file, "A=M").unwrap();
+        writeln!(self.hack_file, "AM=M-1").unwrap();
     }
 
     fn write_push_result(&mut self) {
