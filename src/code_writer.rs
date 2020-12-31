@@ -144,8 +144,84 @@ impl CodeWriter {
                         writeln!(self.hack_file, "@SP").unwrap();
                         writeln!(self.hack_file, "M=M+1").unwrap();
                     },
-                    _ => (),
+                    "temp" => {
+                        writeln!(self.hack_file, "@{}", index).unwrap();
+                        writeln!(self.hack_file, "D=A").unwrap(); 
+                        writeln!(self.hack_file, "@5").unwrap();
+                        writeln!(self.hack_file, "A=D+A").unwrap();
+                        writeln!(self.hack_file, "D=M").unwrap();
+                        writeln!(self.hack_file, "M=0").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "A=M").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "M=M+1").unwrap();
+                    },
+                    _ => {
+                        writeln!(self.hack_file, "@{}", index).unwrap();
+                        writeln!(self.hack_file, "D=A").unwrap();
+                        match segment {
+                            "local" => writeln!(self.hack_file, "@LCL").unwrap(),
+                            "argument" => writeln!(self.hack_file, "@ARG").unwrap(),
+                            "this" => writeln!(self.hack_file, "@THIS").unwrap(),
+                            "that" => writeln!(self.hack_file, "@THAT").unwrap(),
+                            _ => (),
+                        }
+                        writeln!(self.hack_file, "D=D+M").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "A=M").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "M=M+1").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "M=0").unwrap();
+                    },
                 }
+            },
+            parser::Command::C_POP => {
+                match segment {
+                    "temp" => {
+                        writeln!(self.hack_file, "@{}", index).unwrap();
+                        writeln!(self.hack_file, "D=A").unwrap(); 
+                        writeln!(self.hack_file, "@5").unwrap();
+                        writeln!(self.hack_file, "D=D+A").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "AM=M-1").unwrap();
+                        writeln!(self.hack_file, "D=M").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "A=M").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "M=0").unwrap();
+                    },
+                    _ => {
+                        writeln!(self.hack_file, "@{}", index).unwrap();
+                        writeln!(self.hack_file, "D=A").unwrap(); 
+                        match segment {
+                            "local" => writeln!(self.hack_file, "@LCL").unwrap(),
+                            "argument" => writeln!(self.hack_file, "@ARG").unwrap(),
+                            "this" => writeln!(self.hack_file, "@THIS").unwrap(),
+                            "that" => writeln!(self.hack_file, "@THAT").unwrap(),
+                            _ => (),
+                        }
+                        writeln!(self.hack_file, "D=D+M").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@SP").unwrap();
+                        writeln!(self.hack_file, "AM=M-1").unwrap();
+                        writeln!(self.hack_file, "D=M").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "A=M").unwrap();
+                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "@13").unwrap();
+                        writeln!(self.hack_file, "M=0").unwrap();
+                    }
+                }
+
             },
             _ => (),
         }
