@@ -150,7 +150,6 @@ impl CodeWriter {
                         writeln!(self.hack_file, "@5").unwrap();
                         writeln!(self.hack_file, "A=D+A").unwrap();
                         writeln!(self.hack_file, "D=M").unwrap();
-                        writeln!(self.hack_file, "M=0").unwrap();
                         writeln!(self.hack_file, "@SP").unwrap();
                         writeln!(self.hack_file, "A=M").unwrap();
                         writeln!(self.hack_file, "M=D").unwrap();
@@ -168,15 +167,18 @@ impl CodeWriter {
                             _ => (),
                         }
                         writeln!(self.hack_file, "D=D+M").unwrap();
-                        writeln!(self.hack_file, "@13").unwrap();
-                        writeln!(self.hack_file, "M=D").unwrap();
+                        writeln!(self.hack_file, "A=D").unwrap(); // look at register for this location
+                        writeln!(self.hack_file, "D=M").unwrap(); // store the value there in D
+
+                        // writeln!(self.hack_file, "@13").unwrap();
+                        // writeln!(self.hack_file, "M=D").unwrap();
                         writeln!(self.hack_file, "@SP").unwrap();
                         writeln!(self.hack_file, "A=M").unwrap();
                         writeln!(self.hack_file, "M=D").unwrap();
                         writeln!(self.hack_file, "@SP").unwrap();
                         writeln!(self.hack_file, "M=M+1").unwrap();
-                        writeln!(self.hack_file, "@13").unwrap();
-                        writeln!(self.hack_file, "M=0").unwrap();
+                        // writeln!(self.hack_file, "@13").unwrap();
+                        // writeln!(self.hack_file, "M=0").unwrap();
                     },
                 }
             },
